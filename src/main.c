@@ -1,5 +1,5 @@
 #include <stdio.h>
-//#include "warehouse.h"
+#include "warehouse.h"
 #include <string.h>
 #include <stdlib.h>
 
