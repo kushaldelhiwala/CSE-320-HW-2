@@ -2,8 +2,9 @@
 #include "warehouse.h"
 #include <string.h>
 #include <stdlib.h>
+#include <getopt.h>
 
-int main(int arc, char** argv){
+int main(int argc, char** argv){
 
     char user_command [255];
     char operation [255];
@@ -15,6 +16,57 @@ int main(int arc, char** argv){
     int price;
     int exit_flag = 0;
     int ret = -1;
+    int q_flag = 0;
+    int w_flag = 0;
+    int a_flag = 0;
+    int s_flag = 0;
+    char* w_filename = NULL;
+    char* a_filename = NULL;
+    char* s_indicator = NULL;
+    int c;
+
+    while((c = getopt(argc, argv, "qw:a:s:")) != -1){
+        switch(c){
+            case 'q':
+                q_flag = 1;
+                break;
+
+            case 'w':
+                w_flag = 1;
+                w_filename = optarg;
+                break;
+
+            case 'a':
+                a_flag = 1;
+                a_filename = optarg;
+                break;
+
+            case 's':
+                s_flag = 1;
+                s_indicator = optarg;
+                break;
+
+            default:
+                printf("OPTARG ERROR\n");
+                break;
+        }
+    }
+
+    if ((q_flag == 1 && w_flag == 0 && a_flag == 0) || (q_flag == 1 && w_flag == 1 && a_flag == 0) || (q_flag == 1 && w_flag == 0 && a_flag == 1)){
+        printf("FLAG ERROR\n");
+    }
+
+    if (s_indicator != NULL){
+    	if ((strcmp(s_indicator, "s") != 0) && (strcmp(s_indicator, "p") != 0)){
+    		printf("FLAG ERROR\n");
+    	}
+    }
+
+    if (q_flag == 1){
+    	printf("Warehouse File: %s\n", w_filename);
+    	printf("Art Collection File: %s\n", a_filename);
+    	exit(0);
+    }
 
     do{
         printf("Insert Command: ");
