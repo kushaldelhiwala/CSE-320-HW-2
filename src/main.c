@@ -54,18 +54,14 @@ int main(int argc, char** argv){
 
     if ((q_flag == 1 && w_flag == 0 && a_flag == 0) || (q_flag == 1 && w_flag == 1 && a_flag == 0) || (q_flag == 1 && w_flag == 0 && a_flag == 1)){
         printf("FLAG ERROR\n");
+	exit(0);
     }
 
     if (s_indicator != NULL){
     	if ((strcmp(s_indicator, "s") != 0) && (strcmp(s_indicator, "p") != 0)){
     		printf("FLAG ERROR\n");
+		exit(0);
     	}
-    }
-
-    if (q_flag == 1){
-    	printf("Warehouse File: %s\n", w_filename);
-    	printf("Art Collection File: %s\n", a_filename);
-    	exit(0);
     }
 
     do{
