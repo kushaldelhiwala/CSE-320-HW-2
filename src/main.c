@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <unistd.h>
 
 int main(int argc, char** argv){
 
@@ -24,6 +25,7 @@ int main(int argc, char** argv){
     char* a_filename = NULL;
     char* s_indicator = NULL;
     int c;
+    FILE* warehouse_file;
 
     while((c = getopt(argc, argv, "qw:a:s:")) != -1){
         switch(c){
@@ -81,14 +83,15 @@ int main(int argc, char** argv){
                 	int id;
                 	int size;
                 	char type[30];
-                	struct* warehouse temp_warehouse;
+                	struct warehouse* temp_warehouse;
 
                 	while (!feof(warehouse_file)){
-				fscanf(warehouse_file, "%d %d %s", id, size, filename);
+				fscanf(warehouse_file, "%d %d %s", id, size, type);
 
 				temp_warehouse = createWarehouse(id, size);
 			}
                 }
+	}
             
 
             else if (strcmp(operation, "art") == 0){
