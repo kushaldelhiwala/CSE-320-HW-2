@@ -75,9 +75,21 @@ int main(int argc, char** argv){
 
             if (strcmp(operation, "warehouse") == 0){
                 //do stuff, check filename
-                printf("Load Operation: %s\n", operation);
-                printf("Warehouse Filename: %s\n", warehouse_filename);
-            }
+                if (access(warehouse_filename, F_OK)!= -1){
+                	warehouse_file = fopen(warehouse_filename, "rt");
+
+                	int id;
+                	int size;
+                	char type[30];
+                	struct* warehouse temp_warehouse;
+
+                	while (!feof(warehouse_file)){
+				fscanf(warehouse_file, "%d %d %s", id, size, filename);
+
+				temp_warehouse = createWarehouse(id, size);
+			}
+                }
+            
 
             else if (strcmp(operation, "art") == 0){
                 //do stuff, check filename
