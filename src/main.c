@@ -86,7 +86,7 @@ int main(int argc, char** argv){
                 	struct warehouse* temp_warehouse;
 
                 	while (!feof(warehouse_file)){
-				fscanf(warehouse_file, "%d %d %s", id, size, type);
+				fscanf(warehouse_file, "%d %d %s", &id, &size, type);
 
 				temp_warehouse = createWarehouse(id, size);
 			}
