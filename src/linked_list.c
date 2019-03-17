@@ -38,12 +38,12 @@ struct warehouse_list* createWarehouseList (struct warehouse* warehouse, char* t
 	temp << 2;
 
 	if (strcmp(type, "public")){
-		uint8_t temp_int = 2;
+		uint8_t temp_int = 0;
 		temp |= temp_int;
 	}
 
 	else if (strcmp(type, "private")){
-		uint8_t temp_int = 3;
+		uint8_t temp_int = 1;
 		temp |= temp_int;
 	}
 
@@ -54,11 +54,10 @@ struct warehouse_list* createWarehouseList (struct warehouse* warehouse, char* t
 
 }
 
-struct warehouse_sf_list* createWarehouseSfList(int class_size, struct warehouse_list* warehouse_list_head, struct warehouse_sf_list* sf_next_warehouse){
+struct warehouse_sf_list* createWarehouseSfList(int class_size, struct warehouse_list* warehouse_list_head){
 	struct warehouse_sf_list* newWarehouseSfList = (struct warehouse_sf_list*)malloc(sizeof(struct warehouse_sf_list));
 	newWarehouseSfList -> class_size = class_size; 
 	newWarehouseSfList -> warehouse_list_head = warehouse_list_head;
-	newWarehouseSfList -> sf_next_warehouse = sf_next_warehouse;
 
 	return newWarehouseSfList;
 }
