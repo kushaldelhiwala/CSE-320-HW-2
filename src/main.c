@@ -26,6 +26,8 @@ int main(int argc, char** argv){
     char* s_indicator = NULL;
     int c;
     FILE* warehouse_file;
+    int load_warehouse_flag = 0;
+    FILE* art_file;
 
     while((c = getopt(argc, argv, "qw:a:s:")) != -1){
         switch(c){
@@ -78,6 +80,7 @@ int main(int argc, char** argv){
             if (strcmp(operation, "warehouse") == 0){
                 //do stuff, check filename
                 if (access(warehouse_filename, F_OK)!= -1){
+			load_warehouse_flag = 1;
                 	warehouse_file = fopen(warehouse_filename, "rt");
 
                 	int id;
@@ -86,12 +89,14 @@ int main(int argc, char** argv){
                 	struct warehouse* temp_warehouse;
 			struct warehouse_list* temp_warehouse_list;
 			struct warehouse_sf_list* pointer = sf_head;
+			struct warehouse_sf_list* pointer2;
 			struct warehouse_sf_list* temp_warehouse_sf;
 			char singleLine [255];
 
                 	while (!feof(warehouse_file)){
 				fgets (singleLine, 255, warehouse_file);
 				sscanf(singleLine, "%d %d %s", &id, &size, type);
+				pointer2 = pointer;
 				if (size < 4) {
 					printf("Size cannot be less than 4\n");
 					exit (0);
@@ -109,47 +114,49 @@ int main(int argc, char** argv){
 				if (pointer == NULL){
 					temp_warehouse_sf = createWarehouseSfList(size, temp_warehouse_list);
 					pointer = temp_warehouse_sf;
+					pointer2 = temp_warehouse_sf;
 					//temp_warehouse_sf -> warehouse_list_head = temp_warehouse_list;
 				}
 				
 				
-				else if (pointer != NULL){
-               				 while (pointer -> sf_next_warehouse != NULL){
-                   	 			if (pointer->class_size == size){
-                       					struct warehouse_list* warehouse_list = pointer->warehouse_list_head;
+				else if (pointer2 != NULL){
+               				 while (pointer2 -> sf_next_warehouse != NULL){
+                   	 			if (pointer2->class_size == size){
+                       					struct warehouse_list* warehouse_list = pointer2->warehouse_list_head;
 
                         				while (warehouse_list->next_warehouse != NULL){
                            					 warehouse_list = warehouse_list -> next_warehouse;
                         				}
                        					 warehouse_list->next_warehouse = temp_warehouse_list;
+							 break;
                    					}	
 
                    				 else{
-                        				pointer = pointer ->sf_next_warehouse;
+                        				pointer2 = pointer2 ->sf_next_warehouse;
                     				 }
                 			}
 
                 			
-					if(pointer -> sf_next_warehouse == NULL){
-                				if (pointer -> class_size == size){
-                					struct warehouse_list* warehouse_list = pointer->warehouse_list_head;
+					if(pointer2 -> sf_next_warehouse == NULL){
+                				if (pointer2 -> class_size == size){
+                					struct warehouse_list* warehouse_list = pointer2->warehouse_list_head;
 
                         				while (warehouse_list->next_warehouse != NULL){
                             					warehouse_list = warehouse_list -> next_warehouse;
                         				}		
                         				warehouse_list->next_warehouse = temp_warehouse_list;
                 					}
-                				}				
+                							
 
                					 else{
 							temp_warehouse_sf = createWarehouseList(size, temp_warehouse_list);
-							pointer -> sf_next_warehouse = temp_warehouse_sf;
+							pointer2 -> sf_next_warehouse = temp_warehouse_sf;
                 				}			
             
             				}
          			}
 			}
-	
+		}
 		else{
     			printf("File cannot be opened\n");
 		}
@@ -158,8 +165,68 @@ int main(int argc, char** argv){
 
             else if (strcmp(operation, "art") == 0){
                 //do stuff, check filename
-                printf("Load Operation: %s\n", operation);
-                printf("Warehouse Filename: %s\n", warehouse_filename);
+                if (load_warehouse_flag != 1){
+			printf("You have not loaded warehouses yet\n");
+		}
+		
+		if (access(warehouse_filename, F_OK)!= -1){
+			art_file = fopen(warehouse_filename, "rt");
+			
+			char name[50];
+			int size;
+			int price;
+			char line[255];
+			int rep;
+			struct art_collection* temp_art_collection;
+			struct warehouse_sf_list* head = sf_head;
+			struct warehouse_list* temp_ware_list;
+			struct warehouse* temp_ware;
+			uint64_t occupied;
+
+			while (!feof(warehouse_file)){
+				fgets (line, 255, warehouse_file);
+				rep = sscanf(line, "%s %d %d", name, &size, &price);
+				if (rep != 3){
+					sscanf(line, "\"%[^\"]\" %d %d", name, &size, &price);
+				}
+			
+				temp_art_collection = createArtCollection (name, size, price);
+				
+				if (head == NULL){
+					printf("Currently have no warehouses(lists\n");
+				}
+				
+				else{
+					while(head!=NULL){
+						if (head -> class_size = size){
+							temp_ware_list = head->warehouse_list_head;
+							occupied =(((temp_ware_list->meta_info) & (1 << 1)) >> 1);
+							if (occupied == 0){
+								//temp_ware = warehouse_list->warehouse;
+								addToWarehouse(temp_ware, temp_art_collection);
+								(temp_ware_list->meta_info) |= 1;
+							}		
+							else{
+								temp_ware_list = temp_ware_list->next_warehouse;
+							}
+						}
+						else{
+							head = head->sf_next_warehouse;
+						}
+							
+					}	
+				
+				}
+			
+			}
+		}
+		
+		else{
+			printf("File cannot be opened\n");
+
+		}
+
+		
             }
 
             else{
