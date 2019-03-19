@@ -28,6 +28,7 @@ int main(int argc, char** argv){
     FILE* warehouse_file;
     int load_warehouse_flag = 0;
     FILE* art_file;
+    struct warehouse_sf_list* pointer = sf_head;
 
     while((c = getopt(argc, argv, "qw:a:s:")) != -1){
         switch(c){
@@ -88,7 +89,6 @@ int main(int argc, char** argv){
                 	char type[30];
                 	struct warehouse* temp_warehouse;
 			struct warehouse_list* temp_warehouse_list;
-			struct warehouse_sf_list* pointer = sf_head;
 			struct warehouse_sf_list* pointer2;
 			struct warehouse_sf_list* temp_warehouse_sf;
 			char singleLine [255];
@@ -178,48 +178,89 @@ int main(int argc, char** argv){
 			char line[255];
 			int rep;
 			struct art_collection* temp_art_collection;
-			struct warehouse_sf_list* head = sf_head;
+			struct warehouse_sf_list* pointer3;
 			struct warehouse_list* temp_ware_list;
 			struct warehouse* temp_ware;
 			uint64_t occupied;
+			int art_coll_occupied;
 
-			while (!feof(warehouse_file)){
-				fgets (line, 255, warehouse_file);
+			while (!feof(art_file)){
+				fgets (line, 255, art_file);
 				rep = sscanf(line, "%s %d %d", name, &size, &price);
 				if (rep != 3){
 					sscanf(line, "\"%[^\"]\" %d %d", name, &size, &price);
 				}
-			
-				temp_art_collection = createArtCollection (name, size, price);
 				
-				if (head == NULL){
+				art_coll_occupied = 0;
+				temp_art_collection = createArtCollection (name, size, price);
+				pointer3 = pointer;
+				
+				if (pointer3 == NULL){
 					printf("Currently have no warehouses(lists\n");
 				}
 				
-				else{
-					while(head!=NULL){
-						if (head -> class_size = size){
-							temp_ware_list = head->warehouse_list_head;
-							occupied =(((temp_ware_list->meta_info) & (1 << 1)) >> 1);
-							if (occupied == 0){
-								//temp_ware = warehouse_list->warehouse;
-								addToWarehouse(temp_ware, temp_art_collection);
-								(temp_ware_list->meta_info) |= 1;
-							}		
-							else{
-								temp_ware_list = temp_ware_list->next_warehouse;
-							}
-						}
-						else{
-							head = head->sf_next_warehouse;
-						}
-							
-					}	
-				
-				}
+				 else {
+               				while (pointer3 != NULL) {
+                   				if (pointer3->class_size == size) {
+                        				temp_ware_list = pointer3->warehouse_list_head;
+
+                       					while(temp_ware_list != NULL){
+                            					occupied = (((temp_ware_list->meta_info) & (1 << 2)) >> 2);
+                            					if (occupied == 0) {
+                                					temp_ware = temp_ware_list->warehouse;
+                                					addToWarehouse(temp_ware, temp_art_collection);
+                                					//temp_ware_list->warehouse = temp_ware;
+                                					(temp_ware_list->meta_info) |= 1;
+                                					art_coll_occupied = 1;
+                                					break;
+                            					}
+                           					else {
+                                					temp_ware_list = temp_ware_list->next_warehouse;
+                            					}
+                        				}
 			
-			}
+                        					break;
+                    				}
+                    				else {
+                       					 pointer3 = pointer3->sf_next_warehouse;
+                    				}
+
+                			}				
+
+                		if (art_coll_occupied == 0){
+                    			pointer3 = pointer;
+                    			while (pointer3 != NULL) {
+                        			if (pointer3->class_size > size) {
+                            				temp_ware_list = pointer3->warehouse_list_head;
+
+                            				while(temp_ware_list != NULL){
+                                				occupied = (((temp_ware_list->meta_info) & (1 << 2)) >> 2);
+                                				if (occupied == 0) {
+                                    					temp_ware = temp_ware_list->warehouse;
+                                    					addToWarehouse(temp_ware, temp_art_collection);
+                                    					temp_ware_list->warehouse = temp_ware;
+                                    					(temp_ware_list->meta_info) |= 1;
+                                    					art_coll_occupied = 1;
+                                   					 break;
+                                				}
+                                				else {
+                                   					 temp_ware_list = temp_ware_list->next_warehouse;
+                                				}
+                            			
+							}	break;		
+                        			}			
+                        			else {
+                            				pointer3 = pointer3->sf_next_warehouse;
+                        			}
+
+                    			}	
+
+                		}
+
+            		}	
+			
 		}
+	}
 		
 		else{
 			printf("File cannot be opened\n");
@@ -283,11 +324,85 @@ int main(int argc, char** argv){
 
             else {
 
-                printf("Add Art\n");
-                printf("%s\n", name);
-                printf("%d\n", size);
-                printf("%d\n", price);
-            }
+                        char name[50];
+       			int size;
+        		int price;
+        		char line[255];
+        		int rep;
+        		struct art_collection *temp_art_collection;
+        		struct warehouse_list *temp_ware_list;
+        		struct warehouse *temp_ware;
+        		struct warehouse_sf_list* pointer3;
+       	 		uint64_t occupied;
+        		int art_collection_occ = 0;
+
+			art_collection_occ = 0;
+            		temp_art_collection = createArtCollection(name, size, price);
+            		pointer3 = pointer;
+
+			if (pointer3 == NULL) {
+                		printf("Currently have no warehouses(lists\n");
+            		}
+			else {
+               			 while (pointer3 != NULL) {
+                   		 if (pointer3->class_size == size) {
+                        		temp_ware_list = pointer3->warehouse_list_head;
+
+                        		while(temp_ware_list != NULL){
+                            			occupied = (((temp_ware_list->meta_info) & (1 << 2)) >> 2);
+                           			
+						if (occupied == 0) {
+                                			temp_ware = temp_ware_list->warehouse;
+                                			addToWarehouse(temp_ware, temp_art_collection);
+                                			//temp_ware_list->warehouse = temp_ware;
+                                			(temp_ware_list->meta_info) |= 1;
+                                			art_collection_occ = 1;
+                                			break;
+                            			}		
+                           	 else {
+                                	temp_ware_list = temp_ware_list->next_warehouse;
+                            	}	
+                        }
+                        break;
+                    }
+                    else {
+                        pointer3 = pointer3->sf_next_warehouse;
+                    }
+
+                }
+
+                if (art_collection_occ == 0){
+                    pointer3 = pointer;
+                    while (pointer3 != NULL) {
+                        if (pointer3->class_size > size) {
+                            temp_ware_list = pointer3->warehouse_list_head;
+
+                            while(temp_ware_list != NULL){
+                                occupied = (((temp_ware_list->meta_info) & (1 << 2)) >> 2);
+                                if (occupied == 0) {
+                                    temp_ware = temp_ware_list->warehouse;
+                                    addToWarehouse(temp_ware, temp_art_collection);
+                                    temp_ware_list->warehouse = temp_ware;
+                                    (temp_ware_list->meta_info) |= 1;
+                                    art_collection_occ = 1;
+                                    break;
+                                }
+                                else {
+                                    temp_ware_list = temp_ware_list->next_warehouse;
+                                }
+                            }
+			    break;
+                        }
+                        else {
+                            pointer3 = pointer3->sf_next_warehouse;
+                        }
+
+                    }
+
+                }
+
+            }	
+          }
         }
 
 

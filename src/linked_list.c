@@ -5,6 +5,7 @@
 
 struct art_collection* createArtCollection(char* name, int size, int price){
 	struct art_collection* newArtCollection = (struct art_collection*)malloc(sizeof(struct art_collection));
+        newArtCollection -> name = (char*)malloc(50*sizeof(char));
 	strcpy((newArtCollection -> name), name);
 	newArtCollection -> size = size;
 	newArtCollection -> price = price;
