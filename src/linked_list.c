@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "warehouse.h"
 #include <string.h>
+#include "linked_list.h"
 
 struct art_collection* createArtCollection(char* name, int size, int price){
 	struct art_collection* newArtCollection = (struct art_collection*)malloc(sizeof(struct art_collection));
@@ -30,7 +31,7 @@ struct warehouse* addToWarehouse(struct warehouse* temp_warehouse, struct art_co
 }
 
 struct warehouse_list* createWarehouseList (struct warehouse* warehouse, char* type, int size){
-	struct warehouse_list* newWarehouseList = (struct warehouse_list*)malloc(sizeof(struct warehouse));
+	struct warehouse_list* newWarehouseList = (struct warehouse_list*)malloc(sizeof(struct warehouse_list));
 	newWarehouseList -> warehouse = warehouse;
 	newWarehouseList -> next_warehouse = NULL;
 

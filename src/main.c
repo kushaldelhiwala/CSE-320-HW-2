@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <unistd.h>
+#include "linked_list.h"
 
 int main(int argc, char** argv){
 
@@ -110,6 +111,7 @@ int main(int argc, char** argv){
 				temp_warehouse = createWarehouse(id, size);
 				
 				temp_warehouse_list = createWarehouseList(temp_warehouse, type, size);
+				temp_warehouse_list->next_warehouse = NULL;
 
 				if (pointer == NULL){
 					temp_warehouse_sf = createWarehouseSfList(size, temp_warehouse_list);
@@ -149,7 +151,7 @@ int main(int argc, char** argv){
                 							
 
                					 else{
-							temp_warehouse_sf = createWarehouseList(size, temp_warehouse_list);
+							temp_warehouse_sf = createWarehouseSfList(size, temp_warehouse_list);
 							pointer2 -> sf_next_warehouse = temp_warehouse_sf;
                 				}			
             
@@ -205,12 +207,12 @@ int main(int argc, char** argv){
                         				temp_ware_list = pointer3->warehouse_list_head;
 
                        					while(temp_ware_list != NULL){
-                            					occupied = (((temp_ware_list->meta_info) & (1 << 2)) >> 2);
+                            					occupied = ((temp_ware_list->meta_info) & 2);
                             					if (occupied == 0) {
                                 					temp_ware = temp_ware_list->warehouse;
                                 					addToWarehouse(temp_ware, temp_art_collection);
                                 					//temp_ware_list->warehouse = temp_ware;
-                                					(temp_ware_list->meta_info) |= 1;
+                                					(temp_ware_list->meta_info) |= 2;
                                 					art_coll_occupied = 1;
                                 					break;
                             					}
@@ -219,7 +221,7 @@ int main(int argc, char** argv){
                             					}
                         				}
 			
-                        					break;
+                        				break;
                     				}
                     				else {
                        					 pointer3 = pointer3->sf_next_warehouse;
@@ -234,20 +236,22 @@ int main(int argc, char** argv){
                             				temp_ware_list = pointer3->warehouse_list_head;
 
                             				while(temp_ware_list != NULL){
-                                				occupied = (((temp_ware_list->meta_info) & (1 << 2)) >> 2);
+                                				occupied = ((temp_ware_list->meta_info) & 2);
                                 				if (occupied == 0) {
                                     					temp_ware = temp_ware_list->warehouse;
                                     					addToWarehouse(temp_ware, temp_art_collection);
                                     					temp_ware_list->warehouse = temp_ware;
-                                    					(temp_ware_list->meta_info) |= 1;
+                                    					(temp_ware_list->meta_info) |= 2;
                                     					art_coll_occupied = 1;
-                                   					 break;
+                                   					break;
                                 				}
                                 				else {
                                    					 temp_ware_list = temp_ware_list->next_warehouse;
                                 				}
                             			
-							}	break;		
+							}	
+							
+							break;		
                         			}			
                         			else {
                             				pointer3 = pointer3->sf_next_warehouse;
@@ -256,19 +260,23 @@ int main(int argc, char** argv){
                     			}	
 
                 		}
-
-            		}	
 			
+				 if(art_coll_occupied == 0){
+                   			printf("Sorry, no warehouse found to place art collection\n");
+                   			exit (0);
+
+            			}	
+			
+			}
 		}
-	}
 		
+	}	
+
+	
 		else{
 			printf("File cannot be opened\n");
-
 		}
-
-		
-            }
+	}
 
             else{
                 printf("Such a command is not available. The list of available commands are in help\n");
@@ -345,17 +353,17 @@ int main(int argc, char** argv){
             		}
 			else {
                			 while (pointer3 != NULL) {
-                   		 if (pointer3->class_size == size) {
-                        		temp_ware_list = pointer3->warehouse_list_head;
+                   			 if (pointer3->class_size == size) {
+                        			temp_ware_list = pointer3->warehouse_list_head;
 
                         		while(temp_ware_list != NULL){
-                            			occupied = (((temp_ware_list->meta_info) & (1 << 2)) >> 2);
+                            			occupied = ((temp_ware_list->meta_info) & 2);
                            			
 						if (occupied == 0) {
                                 			temp_ware = temp_ware_list->warehouse;
                                 			addToWarehouse(temp_ware, temp_art_collection);
                                 			//temp_ware_list->warehouse = temp_ware;
-                                			(temp_ware_list->meta_info) |= 1;
+                                			(temp_ware_list->meta_info) |= 2;
                                 			art_collection_occ = 1;
                                 			break;
                             			}		
@@ -378,12 +386,12 @@ int main(int argc, char** argv){
                             temp_ware_list = pointer3->warehouse_list_head;
 
                             while(temp_ware_list != NULL){
-                                occupied = (((temp_ware_list->meta_info) & (1 << 2)) >> 2);
+                                occupied = ((temp_ware_list->meta_info) & 2);
                                 if (occupied == 0) {
                                     temp_ware = temp_ware_list->warehouse;
                                     addToWarehouse(temp_ware, temp_art_collection);
                                     temp_ware_list->warehouse = temp_ware;
-                                    (temp_ware_list->meta_info) |= 1;
+                                    (temp_ware_list->meta_info) |= 2;
                                     art_collection_occ = 1;
                                     break;
                                 }
@@ -400,6 +408,11 @@ int main(int argc, char** argv){
                     }
 
                 }
+		
+	      if (art_collection_occ == 0){
+			printf("No warehouse available\n");
+			exit (0);
+	      }
 
             }	
           }
