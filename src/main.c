@@ -435,8 +435,41 @@ int main(int argc, char** argv){
             }
 
             else {
-                printf("Delete Art\n");
-                printf("%s\n", name);
+                struct warehouse_sf_list* pointer3;
+		
+		if(pointer3== NULL){
+            		printf("Have no warehouses so cannot delete\n");
+        	}
+		
+		while(pointer3->sf_next_warehouse!=NULL){
+            		while(pointer3->warehouse_list_head!=NULL){
+                		struct warehouse_list* temp_warehouse_list = pointer3->warehouse_list_head;
+                		if (temp_warehouse_list->warehouse->art_collection== NULL){}
+                		else if (strcmp((temp_warehouse_list->warehouse->art_collection->name),(name))==0){
+					free(temp_warehouse_list->warehouse->art_collection->name);
+					free(temp_warehouse_list->warehouse->art_collection);
+                    			temp_warehouse_list->warehouse->art_collection = NULL;
+                    			temp_warehouse_list->meta_info &= ~(1 << 1);
+                		}
+                		pointer3->warehouse_list_head = pointer3->warehouse_list_head->next_warehouse;
+            		}
+            		pointer3 = pointer3->sf_next_warehouse;
+        	}
+		
+		if(pointer3->sf_next_warehouse == NULL){
+            		while(pointer3->warehouse_list_head!=NULL){
+                		struct warehouse_list* temp_warehouse_list = pointer3->warehouse_list_head;
+                		if (temp_warehouse_list->warehouse->art_collection== NULL){}
+                		else if (strcmp((temp_warehouse_list->warehouse->art_collection->name),(name))==0){
+                    			free(temp_warehouse_list->warehouse->art_collection->name);
+                    			free(temp_warehouse_list->warehouse->art_collection);
+                    			temp_warehouse_list->warehouse->art_collection = NULL;
+                    			temp_warehouse_list->meta_info &= ~(1 << 1);
+                		}
+
+                	pointer3->warehouse_list_head = pointer3->warehouse_list_head->next_warehouse;
+            		}
+        	}			
             }
         }
 
