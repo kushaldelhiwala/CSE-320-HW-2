@@ -37,7 +37,7 @@ struct warehouse_list* createWarehouseList (struct warehouse* warehouse, char* t
 
 	uint64_t temp = 0;
 	temp = size;
-	temp << 2;
+	temp = temp << 2;
 
 	if (strcmp(type, "public") == 0){
 		uint8_t temp_int = 0;

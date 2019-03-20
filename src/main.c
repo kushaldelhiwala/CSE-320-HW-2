@@ -243,7 +243,10 @@ int main(int argc, char** argv){
         while(pointer!= NULL){
             struct warehouse_list* cursor = pointer->warehouse_list_head;
             while(cursor!=NULL){
-                printf("%s %d %d", cursor->warehouse->art_collection->name, cursor->warehouse->art_collection->size, cursor->warehouse->art_collection->price);
+		if (cursor->warehouse->art_collection == NULL){}
+		else{
+                	printf("%s %d %d", cursor->warehouse->art_collection->name, cursor->warehouse->art_collection->size, cursor->warehouse->art_collection->price);
+		}
                 cursor = cursor->next_warehouse;
             }
             pointer = pointer->sf_next_warehouse;
