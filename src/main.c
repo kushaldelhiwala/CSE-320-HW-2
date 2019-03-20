@@ -141,6 +141,7 @@ int main(int argc, char** argv){
             }
         } else {
             printf("File cannot be opened\n");
+	    break;
         }
 
         if (access(a_filename, F_OK) != -1) {
@@ -238,6 +239,7 @@ int main(int argc, char** argv){
 
         } else {
             printf("File cannot be opened\n");
+	    break;
         }
 
         while(pointer!= NULL){
@@ -245,7 +247,7 @@ int main(int argc, char** argv){
             while(cursor!=NULL){
 		if (cursor->warehouse->art_collection == NULL){}
 		else{
-                	printf("%s %d %d", cursor->warehouse->art_collection->name, cursor->warehouse->art_collection->size, cursor->warehouse->art_collection->price);
+                	printf("%s %d %d\n", cursor->warehouse->art_collection->name, cursor->warehouse->art_collection->size, cursor->warehouse->art_collection->price);
 		}
                 cursor = cursor->next_warehouse;
             }
@@ -352,11 +354,7 @@ int main(int argc, char** argv){
 
             else if (strcmp(operation, "art") == 0){
                 //do stuff, check filename
-                if (load_warehouse_flag != 1){
-			printf("You have not loaded warehouses yet\n");
-		}
-		
-		if (access(warehouse_filename, F_OK)!= -1){
+     		if (access(warehouse_filename, F_OK)!= -1){
 			art_file = fopen(warehouse_filename, "rt");
 			
 			char name[50];
@@ -384,6 +382,7 @@ int main(int argc, char** argv){
 				
 				if (pointer3 == NULL){
 					printf("Currently have no warehouses(lists\n");
+					break;
 				}
 				
 				 else {
@@ -481,18 +480,48 @@ int main(int argc, char** argv){
             }
 
             if (strcmp(print_operation, "printall") == 0){
-                printf("Printall\n");
-                //do printall stuff
+                struct warehouse_sf_list* pointer_print = pointer;
+                while(pointer_print!= NULL){
+                    struct warehouse_list* cursor = pointer_print->warehouse_list_head;
+                    while(cursor!=NULL){
+                        if (cursor->warehouse->art_collection == NULL){}
+                        else {
+                            printf("%s %d %d\n", cursor->warehouse->art_collection->name, cursor->warehouse->art_collection->size, cursor->warehouse->art_collection->price);
+                        }
+                        cursor = cursor->next_warehouse;
+                    }
+                    pointer_print = pointer_print->sf_next_warehouse;
+                }
             }
 
             else if (strcmp(operation, "public") == 0){
-                printf("Print Public\n");
-                //do print public stuff
+                struct warehouse_sf_list* pointer_print = pointer;
+                while(pointer_print!= NULL){
+                    struct warehouse_list* cursor = pointer_print->warehouse_list_head;
+                    while(cursor!=NULL){
+                        if (cursor->warehouse->art_collection == NULL){}
+                        else if(((cursor->meta_info) & 1) == 0)  {
+                            printf("%s %d %d\n", cursor->warehouse->art_collection->name, cursor->warehouse->art_collection->size, cursor->warehouse->art_collection->price);
+                        }
+                        cursor = cursor->next_warehouse;
+                    }
+                    pointer_print = pointer_print->sf_next_warehouse;
+                }
             }
 
             else if (strcmp(operation, "private") == 0){
-                printf("Print Private\n");
-                //do print private stuff
+                struct warehouse_sf_list* pointer_print = pointer;
+                while(pointer_print!= NULL){
+                    struct warehouse_list* cursor = pointer_print->warehouse_list_head;
+                    while(cursor!=NULL){
+                        if (cursor->warehouse->art_collection == NULL){}
+                        else if(((cursor->meta_info) & 1) == 1)  {
+                            printf("%s %d %d\n", cursor->warehouse->art_collection->name, cursor->warehouse->art_collection->size, cursor->warehouse->art_collection->price);
+                        }
+                        cursor = cursor->next_warehouse;
+                    }
+                    pointer_print = pointer_print->sf_next_warehouse;
+                }
             }
             else{
                 printf("Such a command is not available. This list of available are in help\n");
@@ -535,6 +564,7 @@ int main(int argc, char** argv){
 
 			if (pointer3 == NULL) {
                 		printf("Currently have no warehouses(lists\n");
+				break;
             		}
 			else {
                			 while (pointer3 != NULL) {
