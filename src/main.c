@@ -422,9 +422,9 @@ int main(int argc, char** argv){
      		if (access(warehouse_filename, F_OK)!= -1){
 			art_file = fopen(warehouse_filename, "rt");
 			
-			char name[50];
-			int size;
-			int price;
+			//char name[50];
+			//int size;
+			//int price;
 			char line[255];
 			int rep;
 			struct art_collection* temp_art_collection;
