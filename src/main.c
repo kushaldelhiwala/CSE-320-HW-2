@@ -141,7 +141,7 @@ int main(int argc, char** argv){
             }
         } else {
             printf("File cannot be opened\n");
-	    break;
+	    exit(0);
         }
 
         if (access(a_filename, F_OK) != -1) {
@@ -239,7 +239,7 @@ int main(int argc, char** argv){
 
         } else {
             printf("File cannot be opened\n");
-	    break;
+	    exit(0);
         }
 
         while(pointer!= NULL){
@@ -651,14 +651,15 @@ int main(int argc, char** argv){
 
             else {
                 struct warehouse_sf_list* pointer3;
+	  	pointer3 = pointer;
 		
 		if(pointer3== NULL){
             		printf("Have no warehouses so cannot delete\n");
         	}
 		
 		while(pointer3->sf_next_warehouse!=NULL){
-            		while(pointer3->warehouse_list_head!=NULL){
-                		struct warehouse_list* temp_warehouse_list = pointer3->warehouse_list_head;
+			struct warehouse_list* temp_warehouse_list = pointer3->warehouse_list_head;
+            		while(temp_warehouse_list!=NULL){
                 		if (temp_warehouse_list->warehouse->art_collection== NULL){}
                 		else if (strcmp((temp_warehouse_list->warehouse->art_collection->name),(name))==0){
 					free(temp_warehouse_list->warehouse->art_collection->name);
@@ -666,14 +667,14 @@ int main(int argc, char** argv){
                     			temp_warehouse_list->warehouse->art_collection = NULL;
                     			temp_warehouse_list->meta_info &= ~(1 << 1);
                 		}
-                		pointer3->warehouse_list_head = pointer3->warehouse_list_head->next_warehouse;
+                		temp_warehouse_list = temp_warehouse_list->next_warehouse;
             		}
             		pointer3 = pointer3->sf_next_warehouse;
         	}
 		
 		if(pointer3->sf_next_warehouse == NULL){
-            		while(pointer3->warehouse_list_head!=NULL){
-                		struct warehouse_list* temp_warehouse_list = pointer3->warehouse_list_head;
+			struct warehouse_list* temp_warehouse_list = pointer3->warehouse_list_head;
+            		while(temp_warehouse_list!=NULL){
                 		if (temp_warehouse_list->warehouse->art_collection== NULL){}
                 		else if (strcmp((temp_warehouse_list->warehouse->art_collection->name),(name))==0){
                     			free(temp_warehouse_list->warehouse->art_collection->name);
@@ -682,7 +683,7 @@ int main(int argc, char** argv){
                     			temp_warehouse_list->meta_info &= ~(1 << 1);
                 		}
 
-                	pointer3->warehouse_list_head = pointer3->warehouse_list_head->next_warehouse;
+                	temp_warehouse_list = temp_warehouse_list->next_warehouse;
             		}
         	}			
             }
