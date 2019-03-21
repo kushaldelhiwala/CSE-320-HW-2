@@ -6,6 +6,18 @@
 #include <unistd.h>
 #include "linked_list.h"
 
+struct warehouse_id {
+    int id;
+    struct warehouse_id* next;
+};
+
+struct warehouse_id* addWarehouseId(int id){
+    struct warehouse_id* newWarehouseId = (struct warehouse_id*)malloc(sizeof(struct warehouse_id));
+    newWarehouseId -> id = id;
+    newWarehouseId ->next = NULL;
+    return newWarehouseId;
+}
+
 int main(int argc, char** argv){
 
     char user_command [255];
@@ -34,6 +46,7 @@ int main(int argc, char** argv){
     int total_num_warehouses = 0; 
     int art_collections_size = 0; 
     int total_warehouse_capacity = 0;
+    struct warehouse_id* head_id = NULL;
 
     while((c = getopt(argc, argv, "qw:a:s:")) != -1){
         switch(c){
@@ -85,12 +98,15 @@ int main(int argc, char** argv){
             struct warehouse_list *temp_warehouse_list;
             struct warehouse_sf_list *pointer2;
             struct warehouse_sf_list *temp_warehouse_sf;
+            struct warehouse_id* temp_warehouse_id;
+            struct warehouse_id* mover_id;
             char singleLine[255];
 
             while (!feof(warehouse_file)) {
                 fgets(singleLine, 255, warehouse_file);
                 sscanf(singleLine, "%d %d %s", &id, &size, type);
                 pointer2 = pointer;
+		mover_id = head_id;
                 if (size < 4) {
                     printf("Size cannot be less than 4\n");
                     exit(0);
@@ -99,6 +115,26 @@ int main(int argc, char** argv){
                 if (size % 2 != 0) {
                     printf("Size must be divisible by 2\n");
                     exit(0);
+                }
+		
+		while(mover_id!=NULL){
+                    if (mover_id->id == id){
+                        printf("You cannot have two same IDs\n");
+                        exit (0);
+                    }
+                    mover_id = mover_id->next;
+                }
+
+                mover_id = head_id;
+                temp_warehouse_id = addWarehouseId(id);
+                if (mover_id == NULL){
+                    mover_id = temp_warehouse_id;
+                }
+                if(mover_id!=NULL){
+                    while(mover_id->next!=NULL){
+                        mover_id= mover_id->next;
+                    }
+                    mover_id->next = temp_warehouse_id;
                 }
 
                 temp_warehouse = createWarehouse(id, size);
@@ -283,12 +319,15 @@ int main(int argc, char** argv){
 			struct warehouse_list* temp_warehouse_list;
 			struct warehouse_sf_list* pointer2;
 			struct warehouse_sf_list* temp_warehouse_sf;
+			struct warehouse_id* temp_warehouse_id;
+                    	struct warehouse_id* mover_id;
 			char singleLine [255];
 
                 	while (!feof(warehouse_file)){
 				fgets (singleLine, 255, warehouse_file);
 				sscanf(singleLine, "%d %d %s", &id, &size, type);
 				pointer2 = pointer;
+				mover_id = head_id;
 				if (size < 4) {
 					printf("Size cannot be less than 4\n");
 					exit (0);
@@ -298,6 +337,27 @@ int main(int argc, char** argv){
 					printf("Size must be divisible by 2\n");
 					exit (0);
 				}
+
+				while(mover_id!=NULL){
+                            		if (mover_id->id == id){
+                                		printf("You cannot have two same IDs\n");
+                                		exit (0);
+                            		}
+                            		mover_id = mover_id->next;
+                        	}		
+
+                        	mover_id = head_id;
+                        	temp_warehouse_id = addWarehouseId(id);
+                        	
+				if (head_id == NULL){
+                            		head_id = temp_warehouse_id;
+                        	}
+                        	else if(mover_id!=NULL){
+                            		while(mover_id->next!=NULL){
+                                		mover_id= mover_id->next;
+                            		}	
+                            	mover_id->next = temp_warehouse_id;
+                        	}	
 
 				temp_warehouse = createWarehouse(id, size);
 				total_num_warehouses++;
