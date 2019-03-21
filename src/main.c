@@ -29,7 +29,11 @@ int main(int argc, char** argv){
     FILE* warehouse_file;
     int load_warehouse_flag = 0;
     FILE* art_file;
-    struct warehouse_sf_list* pointer = sf_head;
+    struct warehouse_sf_list* pointer = sf_head; 
+    int warehouse_occupied = 0;
+    int total_num_warehouses = 0; 
+    int art_collections_size = 0; 
+    int total_warehouse_capacity = 0;
 
     while((c = getopt(argc, argv, "qw:a:s:")) != -1){
         switch(c){
@@ -296,7 +300,8 @@ int main(int argc, char** argv){
 				}
 
 				temp_warehouse = createWarehouse(id, size);
-				
+				total_num_warehouses++;
+				total_warehouse_capacity+=size;
 				temp_warehouse_list = createWarehouseList(temp_warehouse, type, size);
 				temp_warehouse_list->next_warehouse = NULL;
 
@@ -378,6 +383,7 @@ int main(int argc, char** argv){
 				
 				art_coll_occupied = 0;
 				temp_art_collection = createArtCollection (name, size, price);
+				art_collections_size+=size;
 				pointer3 = pointer;
 				
 				if (pointer3 == NULL){
@@ -395,6 +401,7 @@ int main(int argc, char** argv){
                             					if (occupied == 0) {
                                 					temp_ware = temp_ware_list->warehouse;
                                 					addToWarehouse(temp_ware, temp_art_collection);
+									warehouse_occupied++;
                                 					//temp_ware_list->warehouse = temp_ware;
                                 					(temp_ware_list->meta_info) |= 2;
                                 					art_coll_occupied = 1;
@@ -424,6 +431,7 @@ int main(int argc, char** argv){
                                 				if (occupied == 0) {
                                     					temp_ware = temp_ware_list->warehouse;
                                     					addToWarehouse(temp_ware, temp_art_collection);
+									warehouse_occupied++;
                                     					temp_ware_list->warehouse = temp_ware;
                                     					(temp_ware_list->meta_info) |= 2;
                                     					art_coll_occupied = 1;
@@ -560,6 +568,7 @@ int main(int argc, char** argv){
 
 			art_collection_occ = 0;
             		temp_art_collection = createArtCollection(name, size, price);
+			art_collections_size+=size;
             		pointer3 = pointer;
 
 			if (pointer3 == NULL) {
@@ -577,6 +586,7 @@ int main(int argc, char** argv){
 						if (occupied == 0) {
                                 			temp_ware = temp_ware_list->warehouse;
                                 			addToWarehouse(temp_ware, temp_art_collection);
+							warehouse_occupied++;
                                 			//temp_ware_list->warehouse = temp_ware;
                                 			(temp_ware_list->meta_info) |= 2;
                                 			art_collection_occ = 1;
@@ -605,6 +615,7 @@ int main(int argc, char** argv){
                                 if (occupied == 0) {
                                     temp_ware = temp_ware_list->warehouse;
                                     addToWarehouse(temp_ware, temp_art_collection);
+				    warehouse_occupied++;
                                     temp_ware_list->warehouse = temp_ware;
                                     (temp_ware_list->meta_info) |= 2;
                                     art_collection_occ = 1;
@@ -662,6 +673,8 @@ int main(int argc, char** argv){
             		while(temp_warehouse_list!=NULL){
                 		if (temp_warehouse_list->warehouse->art_collection== NULL){}
                 		else if (strcmp((temp_warehouse_list->warehouse->art_collection->name),(name))==0){
+					art_collections_size-=temp_warehouse_list->warehouse->art_collection->size;
+					warehouse_occupied--;
 					free(temp_warehouse_list->warehouse->art_collection->name);
 					free(temp_warehouse_list->warehouse->art_collection);
                     			temp_warehouse_list->warehouse->art_collection = NULL;
@@ -677,6 +690,8 @@ int main(int argc, char** argv){
             		while(temp_warehouse_list!=NULL){
                 		if (temp_warehouse_list->warehouse->art_collection== NULL){}
                 		else if (strcmp((temp_warehouse_list->warehouse->art_collection->name),(name))==0){
+					art_collections_size-=temp_warehouse_list->warehouse->art_collection->size;
+					warehouse_occupied--;
                     			free(temp_warehouse_list->warehouse->art_collection->name);
                     			free(temp_warehouse_list->warehouse->art_collection);
                     			temp_warehouse_list->warehouse->art_collection = NULL;
@@ -711,7 +726,10 @@ int main(int argc, char** argv){
             }
 
             else if(strcmp(operation, "utilization") == 0){
-                printf("Utilization\n");
+                double ratio1 = (double)warehouse_occupied/(double)total_num_warehouses;
+                double ratio2 = (double)art_collections_size/(double)total_warehouse_capacity;
+                printf("Occupied/Total Ratio: %f\n", ratio1);
+                printf("Size/Capacity Ratio: %f\n", ratio2);
             }
 
 	    else{
